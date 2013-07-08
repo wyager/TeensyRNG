@@ -28,11 +28,6 @@ void Randomizer::add(const union data_union& data){
     }
     sha_buffer_contents(this->data);
 }
-void Randomizer::get(uint8_t out_buffer[32]){
-    for(int i=0; i<32; i++){
-        out_buffer[i] = this->data.bytes[i];
-    }
-}
 union data_union Randomizer::get(){
     union data_union result;
     for (int i=0; i<8; i++) {
