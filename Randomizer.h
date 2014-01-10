@@ -12,21 +12,28 @@
 #include "types.h"
 
 
+// This class uses a sponge construction.
+// The bitrate is 128 bits and the capacity is 128 bits.
+// The permutation function is SHA256.
+
 class Randomizer {
 private:
-    union data_union data;
+    
+    union{
+        uint8_t data_bytes[32];
+        uint32_t data_dwords[8];
+    };
     
 public:
     Randomizer(){
         for (int i=0; i<8; i++) {
-            this->data.dwords[i]=0;
+            this->data_dwords[i]=0;
         }
     }
-void add(uint32_t data);
-void add(const union data_union& data);
-void get(uint8_t out_buffer[32]);
-union data_union get();
-
+    void add(uint32_t data);
+    void add(const RandomData& data);
+    void get(RandomData& out_buffer);
+    RandomData get();
 };
 
 #endif /* defined(__TeensyRNG__Randomizer__) */

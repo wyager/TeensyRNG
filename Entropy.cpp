@@ -27,10 +27,10 @@ inline int8_t von_neumann_debias(const uint8_t byte1, const uint8_t byte2, const
 }
 
 
-//It's important to realize what we've got here. It's not 256 bits of entropy. It's just 256 bits of very grey noise. This algorithm gets rid of bias (which there is plenty of in the ADCs) but it doesn't guarantee randomness. This basically records all edges (flips from 1 to 0 or 0 to 1) in each ADC bit and saves it in a buffer. This is very close to grey noise (average 127.5) but no guarantees beyond that.
+//It's important to realize what we've got here. It's not 128 bits of entropy. It's just 128 bits of very grey noise. This algorithm gets rid of bias (which there is plenty of in the ADCs) but it doesn't guarantee randomness. This basically records all edges (flips from 1 to 0 or 0 to 1) in each ADC bit and saves it in a buffer. This is very close to grey noise (average 127.5 for a signal with random timing, regardless of its bias) but no guarantees beyond that.
 #define number_of_adcs 8
-union data_union Entropy::get_entropy(){
-    union data_union collected_entropy;
+RandomData Entropy::get_entropy(){
+    RandomData collected_entropy;
     int collected_entropy_bits = 0; //Number of bits we've collected (We're using a Von Neumann Debias)
     int number_of_times_we_have_tried_to_get_entropy = 0; //This is just a record of how many iterations we've done, so we don't try to sample the same ADC a bunch of times
     
@@ -41,7 +41,7 @@ union data_union Entropy::get_entropy(){
     //This DOES NOT guarantee a certain amount of randomness, though.
     //Without this trick, we'd be much less sure of how much entropy we were getting.
     
-    while (collected_entropy_bits < 256) {
+    while (collected_entropy_bits < 128) {
         
         int current_sample_index = number_of_times_we_have_tried_to_get_entropy % number_of_adcs;
         uint8_t sample_1 = get_adc_sample(current_sample_index);
@@ -56,7 +56,7 @@ union data_union Entropy::get_entropy(){
                 if (delta > 0) collected_entropy.bytes[byte_index] |= 1 << bit_index;
                 if (delta < 0) collected_entropy.bytes[byte_index] &= ~(1 << bit_index);
                 collected_entropy_bits++;
-                if(collected_entropy_bits == 256){
+                if(collected_entropy_bits == 128){
                     break;
                 }
             }
@@ -64,6 +64,6 @@ union data_union Entropy::get_entropy(){
         number_of_times_we_have_tried_to_get_entropy++;
     }
 
-    //If we're here, we've collected 256 bits of debiased entropy from the ADCs. Yay!
-    return collected_entropy; //This returns a union data_union (256 bit buffer)
+    //If we're here, we've collected 128 bits of debiased entropy from the ADCs. Yay!
+    return collected_entropy; //This returns a RandomData (128 bit buffer)
 }

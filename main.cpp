@@ -13,7 +13,6 @@ extern "C"{
 #include <util/delay.h>
 #include "usb_serial.h"
 }
-#include "types.h"
 #include "Entropy.h"
 #include "Randomizer.h"
 #define LED_CONFIG	(DDRD |= (1<<6))
@@ -61,8 +60,8 @@ int main(void)
 			randomizer.add(Entropy::get_entropy()); 
 		}
 		//Get cryptographically mixed and decorrelated random data from the randomizer
-		data_union random_data = randomizer.get();
-		for(int i=0; i<32; i++){
+		RandomData random_data = randomizer.get();
+		for(int i=0; i<16; i++){
 			//Send the random data over the USB serial device
 			usb_serial_putchar(random_data.bytes[i]);
 		}
