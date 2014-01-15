@@ -31,7 +31,7 @@ int main(void)
 {
 	Randomizer randomizer;
 	// set for 16 MHz clock, and turn on the LED
-	CPU_PRESCALE(1);
+	CPU_PRESCALE(0);
 	LED_CONFIG;
 	LED_ON;
 
