@@ -11,16 +11,17 @@
 
 
 void Randomizer::add(const uint32_t data){
-    this->data_dwords[0] ^= data;
     sha256(this->data_bytes, 32, this->data_bytes);
+    this->data_dwords[0] ^= data;
 }
 void Randomizer::add(const RandomData& data){
+    sha256(this->data_bytes, 32, this->data_bytes);
     for (int i=0; i<16; i++) {
         this->data_bytes[i] ^= data.bytes[i];
     }
-    sha256(this->data_bytes, 32, this->data_bytes);
 }
 void Randomizer::get(RandomData& out_buffer){
+    sha256(this->data_bytes, 32, this->data_bytes);
     for(int i=0; i<4; i++){
         out_buffer.dwords[i] = this->data_dwords[i];
     }
