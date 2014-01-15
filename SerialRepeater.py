@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/local/bin/python3
 import serial
 import sys
 
@@ -6,7 +6,7 @@ import sys
 s = serial.Serial("/dev/tty.usbmodem12341")
 while True:
     try:
-        sys.stdout.write(s.read(32))#32 bytes (256 bits) is the size of RNG "packet"
+        sys.stdout.buffer.write(s.read(16))#16 bytes (128 bits) is the size of RNG "packet"
         sys.stdout.flush()
     except KeyboardInterrupt:
         s.close()
