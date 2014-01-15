@@ -53,22 +53,22 @@ int main(void)
 		// "AT command", which can still be buffered.
 		usb_serial_flush_input();
 
-		//Get 256 bits of debiased entropy from the ADCs (using Von Neumann debias)
+		//Get 128 bits of debiased entropy from the ADCs (using Von Neumann debias)
 		//and add that entropy to the randomizer (cryptographic entropy mixer).
 		//Repeat 4 times.
-        LED_ON;
-		for(int i=0; i<1; i++){
+        
+		for(int i=0; i<4; i++){
 			randomizer.add(Entropy::get_entropy()); 
 		}
-        LED_OFF;
+        
 		//Get cryptographically mixed and decorrelated random data from the randomizer
 		RandomData random_data = randomizer.get();
 		for(int i=0; i<16; i++){
 			//Send the random data over the USB serial device
 			usb_serial_putchar(random_data.bytes[i]);
 		}
-		_delay_ms(200);
 		
+		LED_TOGGLE;
 	}
 }
 
